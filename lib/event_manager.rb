@@ -25,13 +25,16 @@ contents.each do |row|
     legislators = civic_info.representative_info_by_address(
       address: zipcode,
       levels: 'country',
-      roles: %w[legislatorUpperBody legislatorLowerBody]
+      roles: ['legislatorUpperBody', 'legislatorLowerBody']
     )
     legislators = legislators.officials
-    legislator_names = legislators.map(&:name) 
-  rescue StandardError
+
+    legislator_names = legislators.map(&:name)
+
+    legislators_string = legislator_names.join(", ")
+  rescue 
     'You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials'
   end
 
-  puts "#{name} #{zipcode} #{legislator_names}"
+  puts "#{name} #{zipcode} #{legislators_string}"
 end
