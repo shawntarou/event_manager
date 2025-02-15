@@ -6,6 +6,28 @@ def clean_zipcode(zipcode)
   zipcode.to_s.rjust(5, '0')[0..4]
 end
 
+def clean_phone_numbers(phonenumber)
+  number = ''
+  phonenumber.chars.each do |char|
+    if Integer(char, exception: false) 
+      number += phonenumber[char].chr
+    end
+  end
+  if number.length < 10
+    "Bad Number"
+  elsif number.length == 10
+    number
+  elsif number.length == 11
+    if number[0] == '1'
+      number[1...]
+    else
+      "Bad Number"
+    end
+  else
+    "Bad Number"
+  end
+end
+
 def legislators_by_zipcode(zip)
   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
   civic_info.key = File.read('secret.key').strip
@@ -45,6 +67,7 @@ erb_template = ERB.new template_letter
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
+  phone_numbers = clean_phone_numbers(row[:homephone]) 
 
   zipcode = clean_zipcode(row[:zipcode])
 
