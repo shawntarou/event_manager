@@ -13,16 +13,14 @@ def clean_phone_numbers(phonenumber)
       number += phonenumber[char].chr
     end
   end
-  if number.length < 10
-    "Bad Number"
-  elsif number.length == 10
-    number
-  elsif number.length == 11
+  if number.length == 11
     if number[0] == '1'
       number[1...]
     else
       "Bad Number"
     end
+  elsif number.length == 10
+    number
   else
     "Bad Number"
   end
