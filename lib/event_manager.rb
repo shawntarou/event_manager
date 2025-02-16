@@ -17,13 +17,26 @@ def clean_phone_numbers(phonenumber)
     if number[0] == '1'
       number[1...]
     else
-      "Bad Number"
+      'Bad Number'
     end
   elsif number.length == 10
     number
   else
-    "Bad Number"
+    'Bad Number'
   end
+end
+
+def clean_time_and_date(time_and_date)
+  time_and_date_array = time_and_date.split(' ')
+  date = time_and_date_array[0].split('/')
+  time = time_and_date_array[1].split(':')
+  year = '20' + date[2] 
+  month = date[0]
+  day = date[1]
+  hour = time[0] 
+  minute = time[1]
+  clean_time = Time.new(year, month, day, hour, minute)
+  puts clean_time.strftime("%m/%d/%Y at %k:%M")
 end
 
 def legislators_by_zipcode(zip)
@@ -66,6 +79,8 @@ contents.each do |row|
   id = row[0]
   name = row[:first_name]
   phone_numbers = clean_phone_numbers(row[:homephone]) 
+  #time_and_date_reg = clean_time_and_date(row[:regdate])
+  clean_time_and_date(row[:regdate])
 
   zipcode = clean_zipcode(row[:zipcode])
 
@@ -73,5 +88,12 @@ contents.each do |row|
 
   form_letter = erb_template.result(binding)
 
-  save_thank_you_letter(id, form_letter)
+  #save_thank_you_letter(id, form_letter)
 end
+
+
+# find out the hours of the day that most people registered
+# t = Time.new(2000, 1, 2, 3, 4)
+# 2000-01-02 03:04:05 -0600
+# - only the hour of day matters
+# - no method to change the time after it has been setu
