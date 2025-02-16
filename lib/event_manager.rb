@@ -50,7 +50,7 @@ end
 
 def get_top3_reg_days_of_week(reg_days_of_week)
   reg_days_of_week_hash = Hash.new(0)
-  reg_days_of_week.map! do |day|
+  reg_days_of_week_readable = reg_days_of_week.map do |day|
     case day
     when 0
       'Sunday'
@@ -72,7 +72,7 @@ def get_top3_reg_days_of_week(reg_days_of_week)
       'Weird Day'
     end
   end
-  reg_days_of_week.each { |day| reg_days_of_week_hash[day] += 1 }
+  reg_days_of_week_readable.each { |day| reg_days_of_week_hash[day] += 1 }
   reg_days_of_week_hash = reg_days_of_week_hash.sort_by { |_, value| value }.to_h()
   top3_reg_days_of_week = [reg_days_of_week_hash.keys[-1], reg_days_of_week_hash.keys[-2], reg_days_of_week_hash.keys[-3]]
   return top3_reg_days_of_week 
