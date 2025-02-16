@@ -36,7 +36,16 @@ def clean_time_and_date(time_and_date)
   hour = time[0] 
   minute = time[1]
   clean_time = Time.new(year, month, day, hour, minute)
-  puts clean_time.strftime("%m/%d/%Y at %k:%M")
+  return clean_time
+  #puts cleanime.strftime("%m/%d/%Y @ %k:%M")
+end
+
+def get_top3_reg_hours(reg_hours)
+  reg_hours_hash = Hash.new(0)
+  reg_hours.each {|hour| reg_hours_hash[hour] += 1}
+  reg_hours_hash = reg_hours_hash.sort_by { |_, value| value }.to_h()
+  top3_reg_hours = ["#{reg_hours_hash.keys[-1]}:00", "#{reg_hours_hash.keys[-2]}:00", "#{reg_hours_hash.keys[-3]}:00"]
+  puts top3_reg_hours
 end
 
 def legislators_by_zipcode(zip)
@@ -74,13 +83,14 @@ contents = CSV.open(
 
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
+reg_hours = []
 
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
   phone_numbers = clean_phone_numbers(row[:homephone]) 
-  #time_and_date_reg = clean_time_and_date(row[:regdate])
-  clean_time_and_date(row[:regdate])
+  time_and_date = clean_time_and_date(row[:regdate])
+  reg_hours.append(time_and_date.hour)
 
   zipcode = clean_zipcode(row[:zipcode])
 
@@ -91,9 +101,4 @@ contents.each do |row|
   #save_thank_you_letter(id, form_letter)
 end
 
-
-# find out the hours of the day that most people registered
-# t = Time.new(2000, 1, 2, 3, 4)
-# 2000-01-02 03:04:05 -0600
-# - only the hour of day matters
-# - no method to change the time after it has been setu
+get_top3_reg_hours(reg_hours)
