@@ -42,10 +42,40 @@ end
 
 def get_top3_reg_hours(reg_hours)
   reg_hours_hash = Hash.new(0)
-  reg_hours.each {|hour| reg_hours_hash[hour] += 1}
+  reg_hours.each { |hour| reg_hours_hash[hour] += 1 }
   reg_hours_hash = reg_hours_hash.sort_by { |_, value| value }.to_h()
   top3_reg_hours = ["#{reg_hours_hash.keys[-1]}:00", "#{reg_hours_hash.keys[-2]}:00", "#{reg_hours_hash.keys[-3]}:00"]
-  puts top3_reg_hours
+  return top3_reg_hours
+end
+
+def get_top3_reg_days_of_week(reg_days_of_week)
+  reg_days_of_week_hash = Hash.new(0)
+  reg_days_of_week.map! do |day|
+    case day
+    when 0
+      'Sunday'
+    when 1
+      'Monday'
+    when 2
+      'Tuesday'
+    when 3
+      'Wednesday'
+    when 4
+      'Thursday'
+    when 5
+      'Friday'
+    when 6
+      'Saturday'
+    when 7
+      'Sunday'
+    else
+      'Weird Day'
+    end
+  end
+  reg_days_of_week.each { |day| reg_days_of_week_hash[day] += 1 }
+  reg_days_of_week_hash = reg_days_of_week_hash.sort_by { |_, value| value }.to_h()
+  top3_reg_days_of_week = [reg_days_of_week_hash.keys[-1], reg_days_of_week_hash.keys[-2], reg_days_of_week_hash.keys[-3]]
+  return top3_reg_days_of_week 
 end
 
 def legislators_by_zipcode(zip)
@@ -84,6 +114,7 @@ contents = CSV.open(
 template_letter = File.read('form_letter.erb')
 erb_template = ERB.new template_letter
 reg_hours = []
+reg_days_of_week = []
 
 contents.each do |row|
   id = row[0]
@@ -91,6 +122,7 @@ contents.each do |row|
   phone_numbers = clean_phone_numbers(row[:homephone]) 
   time_and_date = clean_time_and_date(row[:regdate])
   reg_hours.append(time_and_date.hour)
+  reg_days_of_week.append(time_and_date.wday)
 
   zipcode = clean_zipcode(row[:zipcode])
 
@@ -98,7 +130,5 @@ contents.each do |row|
 
   form_letter = erb_template.result(binding)
 
-  #save_thank_you_letter(id, form_letter)
+  save_thank_you_letter(id, form_letter)
 end
-
-get_top3_reg_hours(reg_hours)
